@@ -25,11 +25,23 @@ define(()=>{
     self.text += txt;
     self.dom.textContent = self.text;
   }
+  function isClass(self, className) {
+    return self.dom.contains(className);
+  }
   function addClass(self, className) {
     self.dom.classList.add(className);
   }
   function removeClass(self, className) {
     self.dom.classList.remove(className);
+  }
+  function toggleClass(self, className) {
+    self.dom.classList.toggle(className);
+  }
+  function attr(self, attrName) {
+    return self.dom.getAttribute(attrName);
+  }
+  function setAttr(self, attrName, attrVal) {
+    self.dom.setAttribute(attrName, attrVal);
   }
 
   function genElm(domElm) {
@@ -43,15 +55,26 @@ define(()=>{
       on: on.bind(null, domInfo),
 
       text: text.bind(null, domInfo),
-      addText: addText.bind(null, domInfo),
+      isClass: isClass.bind(null, domInfo),
       addClass: addClass.bind(null, domInfo),
       removeClass: removeClass.bind(null, domInfo),
+      toggleClass: toggleClass.bind(null, domInfo),
+      setAttr: setAttr.bind(null, domInfo),
+      attr: attr.bind(null, domInfo),
+
+      // ---
+      addText: addText.bind(null, domInfo),
     };
   }
 
   function $(idStr) {
     return genElm(document.getElementById(idStr));
   }
+
+  function body() {
+    return genElm(document.body);
+  }
+
   function map(domCol, handler) {
     const size = domCol.length,
           ret = [];
@@ -92,6 +115,7 @@ define(()=>{
     $,
     getClass$List,
     getTag$List,
+    body,
     bodyClear,
     checkLoadedDocument,
     deviceType,
