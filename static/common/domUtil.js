@@ -43,6 +43,18 @@ define(()=>{
   function setAttr(self, attrName, attrVal) {
     self.dom.setAttribute(attrName, attrVal);
   }
+  function append(self, elms) {
+    if (Array.isArray(elms)) {
+      elms.forEach((elm) => {
+        append(self, elm);
+      });
+      return;
+    } else if (typeof elms === 'string') {
+      self.dom.textContent = elms;
+      return;
+    }
+    self.dom.appendChild(elms.dom);
+  }
 
   function genElm(domElm) {
     const domInfo = {
@@ -61,6 +73,8 @@ define(()=>{
       toggleClass: toggleClass.bind(null, domInfo),
       setAttr: setAttr.bind(null, domInfo),
       attr: attr.bind(null, domInfo),
+
+      append: append.bind(null, domInfo),
 
       // ---
       addText: addText.bind(null, domInfo),
