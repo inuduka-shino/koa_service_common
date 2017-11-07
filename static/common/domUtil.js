@@ -14,62 +14,82 @@ define(()=>{
     });
   }
 
-  function on(self, eventName, eventHandler) {
-    self.dom.addEventListener(eventName, eventHandler);
+
+  const xdom = Symbol('dom cover in domUtil');
+  function isXdom(elm) {
+    return xdom in elm;
   }
-  function text(self, txt) {
-    self.text = txt;
-    self.dom.textContent = self.text;
+  function on(cntxt, eventName, eventHandler) {
+    cntxt.dom.addEventListener(eventName, eventHandler);
+    return cntxt.self;
   }
-  function addText(self, txt) {
-    self.text += txt;
-    self.dom.textContent = self.text;
+  function clear(cntxt) {
+    cntxt.dom.textContent = '';
+    return cntxt.self;
   }
-  function isClass(self, className) {
-    return self.dom.contains(className);
+  function isClass(cntxt, className) {
+    return cntxt.dom.contains(className);
   }
-  function addClass(self, className) {
-    self.dom.classList.add(className);
+  function addClass(cntxt, className) {
+    cntxt.dom.classList.add(className);
+    return cntxt.self;
   }
-  function removeClass(self, className) {
-    self.dom.classList.remove(className);
+  function removeClass(cntxt, className) {
+    cntxt.dom.classList.remove(className);
+    return cntxt.self;
   }
-  function toggleClass(self, className) {
-    self.dom.classList.toggle(className);
+  function toggleClass(cntxt, className) {
+    cntxt.dom.classList.toggle(className);
+    return cntxt.self;
   }
-  function attr(self, attrName) {
-    return self.dom.getAttribute(attrName);
+  function attr(cntxt, attrName) {
+    return cntxt.dom.getAttribute(attrName);
   }
-  function setAttr(self, attrName, attrVal) {
-    self.dom.setAttribute(attrName, attrVal);
+  function setAttr(cntxt, attrName, attrVal) {
+    cntxt.dom.setAttribute(attrName, attrVal);
+    return cntxt.self;
   }
-  function append(self, elms) {
-    if (Array.isArray(elms)) {
+  function text(cntxt, txt) {
+    cntxt.dom.textContent = txt;
+    return cntxt.self;
+  }
+  function addText(cntxt, txt) {
+    cntxt.dom.appendChild(
+      document.createTextNode(txt)
+    );
+    return cntxt.self;
+  }
+  function append(cntxt, elms, noNestedFlag = true) {
+    if (noNestedFlag && Array.isArray(elms)) {
       elms.forEach((elm) => {
-        append(self, elm);
+        append(cntxt, elm, false);
       });
-      return;
     } else if (typeof elms === 'string') {
-      self.dom.textContent = elms;
-      return;
+      addText(cntxt, elms);
+    } else if (isXdom(elms)) {
+      cntxt.dom.appendChild(elms[xdom].dom);
+    } else {
+      throw new Error(`can not append type ${typeof elms}:\n ${elms}`);
     }
-    self.dom.appendChild(elms.dom);
+    return cntxt.self;
   }
 
-  function genElm(domElm) {
+  function genElm(domElm, param={}) {
     const domInfo = {
       dom: domElm,
-      text: null,
+      param,
+      self: {},
     };
-
-    return {
-      dom: domInfo.dom,
+    domInfo.self[xdom] = domInfo;
+    Object.assign(domInfo.self, {
       on: on.bind(null, domInfo),
 
-      text: text.bind(null, domInfo),
+      clear: clear.bind(null, domInfo),
+
       isClass: isClass.bind(null, domInfo),
       addClass: addClass.bind(null, domInfo),
       removeClass: removeClass.bind(null, domInfo),
+
       toggleClass: toggleClass.bind(null, domInfo),
       setAttr: setAttr.bind(null, domInfo),
       attr: attr.bind(null, domInfo),
@@ -78,7 +98,12 @@ define(()=>{
 
       // ---
       addText: addText.bind(null, domInfo),
-    };
+    });
+    if (param.text) {
+      domInfo.self.text = text.bind(null, domInfo);
+    }
+
+    return domInfo.self;
   }
 
   function $(idStr) {
@@ -87,6 +112,12 @@ define(()=>{
 
   function body() {
     return genElm(document.body);
+  }
+  function create(tagName, param) {
+    return genElm(
+      document.createElement(tagName),
+      param
+    );
   }
 
   function map(domCol, handler) {
@@ -110,11 +141,6 @@ define(()=>{
       return genElm(domElm);
     });
   }
-  function bodyClear() {
-    getTag$List('body').forEach(($)=>{
-      $.text('');
-    });
-  }
 
   function deviceType() {
     const userAgent = navigator.userAgent;
@@ -126,11 +152,12 @@ define(()=>{
    }
 
   return {
+    body,
+    create,
+
     $,
     getClass$List,
     getTag$List,
-    body,
-    bodyClear,
     checkLoadedDocument,
     deviceType,
   };
