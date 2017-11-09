@@ -67,7 +67,7 @@ define(()=>{
     } else if (typeof elms === 'string') {
       addText(cntxt, elms);
     } else if (isXdom(elms)) {
-      cntxt.dom.appendChild(elms[xdom].dom);
+      cntxt.dom.appendChild(elms.dom);
     } else {
       throw new Error(`can not append type ${typeof elms}:\n ${elms}`);
     }
@@ -82,6 +82,7 @@ define(()=>{
     };
     domInfo.self[xdom] = domInfo;
     Object.assign(domInfo.self, {
+      dom: domElm,
       on: on.bind(null, domInfo),
 
       clear: clear.bind(null, domInfo),
