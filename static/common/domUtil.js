@@ -27,6 +27,10 @@ define(()=>{
     cntxt.dom.textContent = '';
     return cntxt.self;
   }
+  function remove(cntxt) {
+    cntxt.dom.remove();
+    return cntxt.self;
+  }
   function isClass(cntxt, className) {
     return cntxt.dom.contains(className);
   }
@@ -86,6 +90,7 @@ define(()=>{
       on: on.bind(null, domInfo),
 
       clear: clear.bind(null, domInfo),
+      remove: remove.bind(null, domInfo),
 
       isClass: isClass.bind(null, domInfo),
       addClass: addClass.bind(null, domInfo),
@@ -113,6 +118,9 @@ define(()=>{
 
   function body() {
     return genElm(document.body);
+  }
+  function head() {
+    return genElm(document.head);
   }
   function create(tagName, param) {
     return genElm(
@@ -154,6 +162,7 @@ define(()=>{
 
   return {
     body,
+    head,
     create,
 
     $,
