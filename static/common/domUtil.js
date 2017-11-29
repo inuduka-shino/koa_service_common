@@ -57,6 +57,9 @@ define(()=>{
     cntxt.dom.textContent = txt;
     return cntxt.self;
   }
+  function getText(cntxt, txt) {
+    return cntxt.dom.textContent;
+  }
   function addText(cntxt, txt) {
     cntxt.dom.appendChild(
       document.createTextNode(txt)
@@ -99,6 +102,8 @@ define(()=>{
       toggleClass: toggleClass.bind(null, domInfo),
       setAttr: setAttr.bind(null, domInfo),
       attr: attr.bind(null, domInfo),
+
+      getText: getText.bind(null,domInfo),
 
       append: append.bind(null, domInfo),
 
