@@ -53,11 +53,18 @@ define(()=>{
     cntxt.dom.setAttribute(attrName, attrVal);
     return cntxt.self;
   }
+  function val(cntxt) {
+    return cntxt.dom.value;
+  }
+  function setVal(cntxt, val) {
+    cntxt.dom.value = val;
+    return cntxt.dom.self;
+  }
   function text(cntxt, txt) {
     cntxt.dom.textContent = txt;
     return cntxt.self;
   }
-  function getText(cntxt, txt) {
+  function getText(cntxt) {
     return cntxt.dom.textContent;
   }
   function addText(cntxt, txt) {
@@ -102,6 +109,9 @@ define(()=>{
       toggleClass: toggleClass.bind(null, domInfo),
       setAttr: setAttr.bind(null, domInfo),
       attr: attr.bind(null, domInfo),
+
+      val: val.bind(null,domInfo),
+      setVal: setVal.bind(null,domInfo),
 
       getText: getText.bind(null,domInfo),
 
