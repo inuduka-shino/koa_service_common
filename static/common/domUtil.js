@@ -113,6 +113,7 @@ define(()=>{
       val: val.bind(null,domInfo),
       setVal: setVal.bind(null,domInfo),
 
+      text: text.bind(null,domInfo),
       getText: getText.bind(null,domInfo),
 
       append: append.bind(null, domInfo),
@@ -120,9 +121,6 @@ define(()=>{
       // ---
       addText: addText.bind(null, domInfo),
     });
-    if (param.text) {
-      domInfo.self.text = text.bind(null, domInfo);
-    }
 
     return domInfo.self;
   }
@@ -175,6 +173,20 @@ define(()=>{
     return 'unkown';
    }
 
+   function genBar(children=null) {
+     const pOuter = create('div').addClass('row'),
+           pInner = create('div').addClass('col');
+     pOuter.append(pInner);
+     if (children !== null) {
+       pInner.append(children);
+     }
+     pOuter.directAppend = pOuter.append;
+     pOuter.append = pInner.append;
+     pOuter.inner = pInner;
+
+     return pOuter;
+   }
+
   return {
     body,
     head,
@@ -185,5 +197,6 @@ define(()=>{
     getTag$List,
     checkLoadedDocument,
     deviceType,
+    genBar,
   };
 });
