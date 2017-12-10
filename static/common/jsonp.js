@@ -21,9 +21,15 @@ define((require)=>{
       .setAttr('type', 'text/javascript')
       .setAttr('src', [url, paramStr].join('?'));
     const prms = new Promise((resolve, reject)=>{
+      $script.on('load',()=>{
+        $script.remove();
+      });
+      $script.on('error',(err)=>{
+        reject(err);
+        $script.remove();
+      });
       window[callbackName] = (data)=>{
         resolve(data);
-        $script.remove();
         // delete window[callbackName];
       };
       try {
