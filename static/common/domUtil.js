@@ -190,8 +190,8 @@ define(()=>{
    }
 
    function genBar(children=null) {
-     const pOuter = create('div').addClass('row'),
-           pInner = create('div').addClass('col');
+     const pOuter = create('div').addFeature('class').addClass('row'),
+           pInner = create('div').addFeature('class').addClass('col');
      pOuter.append(pInner);
      if (children !== null) {
        pInner.append(children);
