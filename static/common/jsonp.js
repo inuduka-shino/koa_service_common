@@ -16,7 +16,8 @@ define((require)=>{
       return keyval.join('=');
     }).join('&');
 
-    const $script = create('script');
+    const $script = create('script')
+            .addFeature(['attribute', 'event']);
     $script
       .setAttr('type', 'text/javascript')
       .setAttr('src', [url, paramStr].join('?'));
@@ -33,7 +34,7 @@ define((require)=>{
         // delete window[callbackName];
       };
       try {
-        head().append($script);
+        head().addFeature('container').append($script);
       } catch (err) {
         reject(err);
       }

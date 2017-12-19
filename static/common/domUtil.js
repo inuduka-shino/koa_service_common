@@ -21,6 +21,10 @@ define(()=>{
   function isXdom(elm) {
     return xdom in elm;
   }
+  function remove(cntxt) {
+    cntxt.dom.remove();
+    return cntxt.self;
+  }
 
   function addText(cntxt, txt) {
     cntxt.dom.appendChild(
@@ -61,10 +65,6 @@ define(()=>{
 
   featureMap.container = Object.entries({
     append,
-    remove(cntxt) {
-      cntxt.dom.remove();
-      return cntxt.self;
-    },
   });
 
   featureMap.attribute = Object.entries({
@@ -137,6 +137,7 @@ define(()=>{
     domInfo.self[xdom] = domInfo;
     domInfo.self.dom = domElm;
     domInfo.self.addFeature = addFeature.bind(null, domInfo);
+    domInfo.self.remove = remove.bind(null, domInfo);
 
     return domInfo.self;
   }
@@ -190,8 +191,8 @@ define(()=>{
    }
 
    function genBar(children=null) {
-     const pOuter = create('div').addFeature('class').addClass('row'),
-           pInner = create('div').addFeature('class').addClass('col');
+     const pOuter = create('div').addFeature(['class','container']).addClass('row'),
+           pInner = create('div').addFeature(['class','container']).addClass('col');
      pOuter.append(pInner);
      if (children !== null) {
        pInner.append(children);
