@@ -99,16 +99,22 @@ define(()=>{
     },
   });
 
-  function addFeature(cntxt, features0) {
+  function addFeature(cntxt, features0, ifObj = cntxt.self) {
     let features = null;
     if (Array.isArray(features0)) {
       features = features0;
     } else if (typeof features0 === 'string') {
       features = [features0];
+    } else {
+      throw new Error(`bad type feature(${typeof feature0})`);
     }
     features.forEach((feature) => {
-      featureMap[feature].forEach(([name, entry])=>{
-        cntxt.self[name] = entry.bind(null, cntxt);
+      const fMap = featureMap[feature];
+      if (Object.keys(fMap).length === 0) {
+        throw new Error(`feature[${feature}] is unkown.`);
+      }
+      fMap.forEach(([name, entry])=>{
+        ifObj[name] = entry.bind(null, cntxt);
       });
     });
     return cntxt.self;
@@ -116,16 +122,22 @@ define(()=>{
 
   featureMap.base = Object.entries({
     addFeature,
+    feature(cntxt, featureList, handle) {
+      const tempSelf = {};
+      addFeature(cntxt, featureList, tempSelf);
+      handle(tempSelf);
+      return cntxt.self;
+    },
     remove(cntxt) {
       cntxt.dom.remove();
       return cntxt.self;
     },
   });
 
-  function genElm(domElm, param={}) {
+
+  function genElm(domElm) {
     const domInfo = {
       dom: domElm,
-      param,
       self: {},
     };
     domInfo.self[xdom] = domInfo;
