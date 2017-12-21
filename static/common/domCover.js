@@ -99,7 +99,7 @@ define(()=>{
     },
   });
 
-  function addFeature(cntxt, features0, ifObj = cntxt.self) {
+  function addFeature(cntxt, features0) {
     let features = null;
     if (Array.isArray(features0)) {
       features = features0;
@@ -114,7 +114,7 @@ define(()=>{
         throw new Error(`feature[${feature}] is unkown.`);
       }
       fMap.forEach(([name, entry])=>{
-        ifObj[name] = entry.bind(null, cntxt);
+        cntxt.self[name] = entry.bind(null, cntxt);
       });
     });
     return cntxt.self;
@@ -123,9 +123,11 @@ define(()=>{
   featureMap.base = Object.entries({
     addFeature,
     feature(cntxt, featureList, handle) {
-      const tempSelf = {};
-      addFeature(cntxt, featureList, tempSelf);
-      handle(tempSelf);
+      const tempSelf = cntxt.self;
+      cntxt.self = {};
+      addFeature(cntxt, featureList);
+      handle(cntxt.self);
+      cntxt.self = tempSelf;
       return cntxt.self;
     },
     remove(cntxt) {
